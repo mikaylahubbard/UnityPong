@@ -10,12 +10,29 @@ public class BallMovement : MonoBehaviour
 
         // Set initial values
         ball.linearVelocity = new Vector2(3.0f, 3.0f);
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        Rigidbody2D ball = GetComponent<Rigidbody2D>();
+
+        if (collision.gameObject.tag == "vertical")
+        {
+            ball.linearVelocity = new Vector2(-ball.linearVelocity.x, ball.linearVelocity.y);
+        }
+        else if (collision.gameObject.tag == "horizontal")
+        {
+            ball.linearVelocity = new Vector2(ball.linearVelocity.x, -ball.linearVelocity.y);
+        }
+    }
+
+
+
 }
