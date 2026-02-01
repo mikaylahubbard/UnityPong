@@ -69,6 +69,10 @@ public class BallMovement : MonoBehaviour
         {
             Direction = new Vector2(Direction.x, -Direction.y);
         }
+        else if (collision.gameObject.tag == "paddle")
+        {
+            Direction = new Vector2(-Direction.x, Direction.y);
+        }
 
         ball.linearVelocity = direction * speed;
     }
