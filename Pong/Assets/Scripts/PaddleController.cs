@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class PaddleController : MonoBehaviour
+public abstract class PaddleController : MonoBehaviour
 {
-    protected float speed = 5f;
+    protected float speed = 6f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -10,9 +10,5 @@ public class PaddleController : MonoBehaviour
     }
 
     // Update is called once per frame
-    protected virtual void Update()
-    {
-        // float vertical = Input.GetAxis("Vertical");
-        // transform.position += new Vector3(0, vertical * speed * Time.deltaTime, 0);
-    }
+    protected abstract void Update();
 }
