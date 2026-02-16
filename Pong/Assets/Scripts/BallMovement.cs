@@ -1,8 +1,9 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Unity.Netcode;
 
-public class BallMovement : MonoBehaviour, ICollidable
+public class BallMovement : NetworkBehaviour, ICollidable
 {
     private float speed = 7f;
     private float maxSpeed = 20f;
@@ -58,19 +59,23 @@ public class BallMovement : MonoBehaviour, ICollidable
 
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
-        // Get components
         ball = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        // Set initial values
-        Direction = new Vector2(3.0f, 3.0f);
-
     }
 
+    public override void OnNetworkSpawn()
+    {
+
+        if (IsServer)
+        {
+            Direction = new Vector2(3.0f, 3.0f);
+        }
+    }
     void FixedUpdate()
     {
+        if (!IsServer) return;
         ball.linearVelocity = direction * speed;
     }
     // Update is called once per frame
@@ -82,6 +87,7 @@ public class BallMovement : MonoBehaviour, ICollidable
     void OnCollisionEnter2D(Collision2D collision)
     {
 
+        if (!IsServer) return;
         // call OnHit() for the object the ball collided with
         ICollidable collidable = collision.gameObject.GetComponent<ICollidable>();
 
@@ -96,7 +102,7 @@ public class BallMovement : MonoBehaviour, ICollidable
 
     public void OnHit(Collision2D collision)
     {
-        Debug.Log("Car was hit by: " + collision.gameObject.name);
+        if (!IsServer) return;
         if (collision.gameObject.tag == "vertical")
         {
             Direction = new Vector2(-Direction.x, Direction.y);

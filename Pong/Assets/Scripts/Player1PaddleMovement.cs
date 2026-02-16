@@ -1,7 +1,10 @@
 using UnityEngine;
-
+using Unity.Netcode;
+using System.Linq.Expressions;
+// LEFT paddle
 public class Player1PaddleMovement : PaddleController, ICollidable
 {
+
     public void OnHit(Collision2D collision)
     {
         Debug.Log("Player 1 was hit!");
@@ -16,8 +19,24 @@ public class Player1PaddleMovement : PaddleController, ICollidable
 
     protected override void Update()
     {
+        Debug.Log($"IsOwner: {IsOwner} | IsSpawned: {IsSpawned}");
+        if (!CanProcessNetwork()) return;
+        float currentY = yPosition.Value;
         GetComponent<Renderer>().material.color = Color.red;
-        float vertical = Input.GetAxis("Player1Vertical");
-        transform.position += new Vector3(0, vertical * speed * Time.deltaTime, 0);
+
+        if (IsLocalOwner())
+        {
+            float input = Input.GetAxis("Player1Vertical");
+            float newY = transform.position.y + (input * speed * Time.deltaTime);
+            yPosition.Value = newY;
+            // transform.position += new Vector3(0, vertical * speed * Time.deltaTime, 0);
+            transform.position = new Vector3(transform.position.x, newY, 0);
+        }
+        else
+        {
+            // Non-owners: Read NetworkVariable and update visual position
+            transform.position = new Vector3(transform.position.x, yPosition.Value, 0);
+        }
+
     }
 }

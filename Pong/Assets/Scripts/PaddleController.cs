@@ -1,12 +1,23 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public abstract class PaddleController : MonoBehaviour
+public abstract class PaddleController : NetworkBehaviour
 {
     protected float speed = 6f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
+    protected NetworkVariable<float> yPosition =
+    new NetworkVariable<float>(
+        0f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner);
 
+
+    protected bool CanProcessNetwork()
+    {
+        return IsSpawned;
+    }
+    protected bool IsLocalOwner()
+    {
+        return IsOwner;
     }
 
     // Update is called once per frame
