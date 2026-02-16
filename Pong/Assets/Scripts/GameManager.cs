@@ -3,17 +3,20 @@ using UnityEngine;
 
 public class GameManager : NetworkBehaviour
 {
-    public GameObject leftPaddlePrefab;
-    public GameObject rightPaddlePrefab;
-    public GameObject ballPrefab;
-    private int playerCount = 0;
+    [Header("Prefabs")]
+    [SerializeField] private GameObject leftPaddlePrefab;
+    [SerializeField] private GameObject rightPaddlePrefab;
+    [SerializeField] private GameObject ballPrefab;
 
     public override void OnNetworkSpawn()
     {
         if (!IsServer) return;
 
+        // Spawn ball once match starts
         SpawnBall();
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+
+        // Listen for players joining
+        NetworkManager.OnClientConnectedCallback += OnClientConnected;
     }
 
     private void SpawnBall()
@@ -22,20 +25,32 @@ public class GameManager : NetworkBehaviour
         ball.GetComponent<NetworkObject>().Spawn();
     }
 
-
-
     private void OnClientConnected(ulong clientId)
     {
         if (!IsServer) return;
 
-        GameObject prefabToSpawn =
-            playerCount == 0 ? leftPaddlePrefab : rightPaddlePrefab;
+        SpawnPlayerPaddle(clientId);
+    }
 
-        GameObject paddle = Instantiate(prefabToSpawn);
 
-        paddle.GetComponent<NetworkObject>()
-            .SpawnAsPlayerObject(clientId);
 
-        playerCount++;
+
+    private void SpawnPlayerPaddle(ulong clientId)
+    {
+        GameObject paddlePrefab =
+            clientId == NetworkManager.ServerClientId
+            ? leftPaddlePrefab
+            : rightPaddlePrefab;
+
+        Vector3 spawnPos =
+            clientId == NetworkManager.ServerClientId
+            ? new Vector3(-7, 0, 0)
+            : new Vector3(7, 0, 0);
+
+        GameObject paddle = Instantiate(paddlePrefab);
+        paddle.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
+
+
     }
 }
+

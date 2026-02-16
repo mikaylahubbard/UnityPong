@@ -10,7 +10,8 @@ public class BallMovement : NetworkBehaviour, ICollidable
     private Vector2 direction;
     private Rigidbody2D ball;
     private SpriteRenderer _spriteRenderer;
-    private Color color = Color.white;
+    private NetworkVariable<Color> netColor =
+    new NetworkVariable<Color>(Color.white);
 
 
 
@@ -45,14 +46,13 @@ public class BallMovement : NetworkBehaviour, ICollidable
 
     public Color Color
     {
-        get { return color; }
+        get => netColor.Value;
         set
         {
-            color = value;
-            if (_spriteRenderer != null)
-                _spriteRenderer.color = color;
-            else
-                GetComponent<Renderer>().material.color = color;
+            if (IsServer)
+            {
+                netColor.Value = value;
+            }
         }
 
     }
@@ -67,6 +67,8 @@ public class BallMovement : NetworkBehaviour, ICollidable
 
     public override void OnNetworkSpawn()
     {
+        ApplyColor(netColor.Value);
+
 
         if (IsServer)
         {
@@ -118,4 +120,29 @@ public class BallMovement : NetworkBehaviour, ICollidable
 
         ball.linearVelocity = direction * speed;
     }
+
+
+    private void OnEnable()
+    {
+        netColor.OnValueChanged += OnColorChanged;
+    }
+
+    private void OnDisable()
+    {
+        netColor.OnValueChanged -= OnColorChanged;
+    }
+
+    private void OnColorChanged(Color oldColor, Color newColor)
+    {
+        ApplyColor(newColor);
+    }
+
+    private void ApplyColor(Color c)
+    {
+        if (_spriteRenderer != null)
+            _spriteRenderer.color = c;
+        else
+            GetComponent<Renderer>().material.color = c;
+    }
+
 }
