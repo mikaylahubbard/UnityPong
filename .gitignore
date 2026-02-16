@@ -81,3 +81,10 @@ Pong/Assets/InitTestScene*.unity*
 # Blender temp files
 ############################
 *.blend1
+
+
+############################
+# Local clone folders
+############################
+Pong_clone_*/
+
