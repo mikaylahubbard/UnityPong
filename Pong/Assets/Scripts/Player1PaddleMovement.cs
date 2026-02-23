@@ -7,7 +7,7 @@ public class Player1PaddleMovement : PaddleController, ICollidable
 
     public void OnHit(Collision2D collision)
     {
-        Debug.Log("Player 1 was hit!");
+        // Debug.Log("Player 1 was hit!");
         // Look for the script on the object hit, or any of its parents
         BallMovement ball = collision.otherCollider.GetComponentInParent<BallMovement>();
 
@@ -19,7 +19,7 @@ public class Player1PaddleMovement : PaddleController, ICollidable
 
     protected override void Update()
     {
-        Debug.Log($"IsOwner: {IsOwner} | IsSpawned: {IsSpawned}");
+        // Debug.Log($"IsOwner: {IsOwner} | IsSpawned: {IsSpawned}");
         if (!CanProcessNetwork()) return;
         float currentY = yPosition.Value;
         GetComponent<Renderer>().material.color = Color.red;

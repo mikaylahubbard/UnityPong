@@ -7,6 +7,9 @@ TagManager:
   - horizontal
   - vertical
   - paddle
+  - ball
+  - 2Scores
+  - 1Scores
   layers:
   - Default
   - TransparentFX

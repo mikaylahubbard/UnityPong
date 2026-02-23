@@ -15,6 +15,7 @@ public class BallMovement : NetworkBehaviour, ICollidable
 
 
 
+
     public float Speed
     {
         get { return speed; }
@@ -63,6 +64,7 @@ public class BallMovement : NetworkBehaviour, ICollidable
     {
         ball = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+
     }
 
     public override void OnNetworkSpawn()
@@ -77,7 +79,10 @@ public class BallMovement : NetworkBehaviour, ICollidable
     }
     void FixedUpdate()
     {
+        GameManager manager = FindFirstObjectByType<GameManager>();
         if (!IsServer) return;
+        // if (!gameManager.IsGameStarted()) return;
+        if (!manager.IsGameStarted()) return;
         ball.linearVelocity = direction * speed;
     }
     // Update is called once per frame
